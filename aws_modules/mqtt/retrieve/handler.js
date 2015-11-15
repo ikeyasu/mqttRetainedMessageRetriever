@@ -7,13 +7,42 @@
  */
 
 require('jaws-core-js/env');
+var mqtt = require('mqtt');
+var _ = require('lodash');
 
-// Modularized Code
-var action = require('./index.js');
+var globalConfig = {
+  "protocol": "mqtt",
+  "keepalive": 10000,
+  "rejectUnauthorized": false
+};
+var TIMEOUT_MSEC = 10 * 1000; // 10 sec
 
-// Lambda Handler
+// Lambda Handle
 module.exports.handler = function(event, context) {
-  action.run(event, context, function(error, result) {
-    return context.done(error, result);
+  var conf = {
+    host: event.host,
+    port: event.port,
+    username: event.username,
+    password: event.password,
+  };
+
+  _.merge(conf, globalConfig);
+  var client = mqtt.connect(conf);
+
+  setTimeout(function() {
+    context.done("Error: Timeout");
+  }, TIMEOUT_MSEC);
+
+  client.on('error', function(error) {
+    context.done(error, null);
+  });
+
+  client.on('connect', function() {
+    console.log('connected to ' + conf.host);
+    this.subscribe(event.topic);
+  });
+
+  client.on('message', function(topic, message, packet) {
+    context.done(null, message.toString());
   });
 };

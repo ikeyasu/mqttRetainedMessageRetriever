@@ -12,6 +12,8 @@
   "keywords": [],
   "devDependencies": {},
   "dependencies": {
-    "jaws-core-js": "~0.0.2"
+    "jaws-core-js": "~0.0.2",
+    "mqtt": "1.4.3",
+    "lodash": "3.10.1"
   }
 }

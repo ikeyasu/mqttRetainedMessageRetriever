@@ -1,7 +1,7 @@
 {
   "lambda": {
     "envVars": [],
-    "deploy": false,
+    "deploy": true,
     "package": {
       "optimize": {
         "builder": "browserify",
@@ -30,7 +30,9 @@
       "Method": "GET",
       "AuthorizationType": "none",
       "ApiKeyRequired": false,
-      "RequestTemplates": {},
+      "RequestTemplates": {
+        "application/json": "{\"host\":\"$input.params('host')\", \"port\":\"$input.params('port')\", \"username\":\"$input.params('username')\", \"password\":\"$input.params('password')\", \"topic\":\"$input.params('topic')\"}"
+      },
       "RequestParameters": {},
       "Responses": {
         "400": {
