@@ -1,6 +1,9 @@
 {
   "lambda": {
-    "envVars": [],
+    "envVars": [
+      "API_KEY",
+      "API_SECRET"
+    ],
     "deploy": true,
     "package": {
       "optimize": {
@@ -31,7 +34,7 @@
       "AuthorizationType": "none",
       "ApiKeyRequired": false,
       "RequestTemplates": {
-        "application/json": "{\"host\":\"$input.params('host')\", \"port\":\"$input.params('port')\", \"username\":\"$input.params('username')\", \"password\":\"$input.params('password')\", \"topic\":\"$input.params('topic')\"}"
+        "application/json": "{\"host\":\"$input.params('host')\", \"port\":\"$input.params('port')\", \"username\":\"$input.params('username')\", \"password\":\"$input.params('password')\", \"topic\":\"$input.params('topic')\", \"apikey\":\"$input.params('apikey')\", \"encrypted\":\"$input.params('encrypted')\"}"
       },
       "RequestParameters": {},
       "Responses": {

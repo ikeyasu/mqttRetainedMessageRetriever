@@ -19,30 +19,47 @@ var TIMEOUT_MSEC = 10 * 1000; // 10 sec
 
 // Lambda Handle
 module.exports.handler = function(event, context) {
-  var conf = {
-    host: event.host,
-    port: event.port,
-    username: event.username,
-    password: event.password,
-  };
+  setTimeout(function() {
+    return context.done("Error: Timeout", null);
+  }, TIMEOUT_MSEC);
 
+  if (event.apikey) {
+    var passwordDb = require('../../app/password/passworddb.js');
+    passwordDb.get(event.apikey, function(data) {
+      var cryptoJS = require('crypto-js');
+      console.log(event.encrypted);
+      var parsedWordArray = cryptoJS.enc.Base64.parse(event.encrypted);
+      var parsedStr = parsedWordArray.toString(cryptoJS.enc.Utf8);
+      var decryptedBuf = cryptoJS.AES.decrypt(parsedStr, data.Item.password);
+      var conf = JSON.parse(decryptedBuf.toString(cryptoJS.enc.Utf8));
+      _.merge(conf, globalConfig);
+      retrieveRetainedMessage(conf, context);
+    });
+  } else {
+    retrieveRetainedMessage(event, context);
+  }
+};
+
+function retrieveRetainedMessage(options, context) {
+  var conf = {
+    host: options.host,
+    port: options.port,
+    username: options.username,
+    password: options.password
+  };
   _.merge(conf, globalConfig);
   var client = mqtt.connect(conf);
 
-  setTimeout(function() {
-    context.done("Error: Timeout");
-  }, TIMEOUT_MSEC);
-
   client.on('error', function(error) {
-    context.done(error, null);
+    return context.done(error, null);
   });
 
   client.on('connect', function() {
     console.log('connected to ' + conf.host);
-    this.subscribe(event.topic);
+    this.subscribe(options.topic);
   });
 
   client.on('message', function(topic, message, packet) {
-    context.done(null, message.toString());
+    return context.done(null, message.toString());
   });
-};
+}

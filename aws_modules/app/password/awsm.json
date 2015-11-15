@@ -1,7 +1,10 @@
 {
   "lambda": {
-    "envVars": [],
-    "deploy": false,
+    "envVars": [
+      "API_KEY",
+      "API_SECRET"
+    ],
+    "deploy": true,
     "package": {
       "optimize": {
         "builder": "browserify",
